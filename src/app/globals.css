@@ -54,13 +54,60 @@ body {
 
 /* Opening sequence */
 @keyframes greeting-in {
-  0% { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translateY(20px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes greeting-out {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-12px); }
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-20px) scale(1.02); }
+}
+
+@keyframes line-expand {
+  0% { width: 0; opacity: 0; }
+  100% { width: 120px; opacity: 1; }
+}
+
+@keyframes fade-up-slow {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.greeting-line {
+  animation: line-expand 1.5s ease-out 0.8s forwards;
+  width: 0;
+  opacity: 0;
+}
+
+.greeting-date {
+  animation: fade-up-slow 1s ease-out 1.2s forwards;
+  opacity: 0;
+}
+
+.greeting-subtitle {
+  animation: fade-up-slow 1s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+.greeting-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.9) 0%,
+    rgba(0,229,255,0.8) 25%,
+    rgba(255,255,255,0.9) 50%,
+    rgba(0,229,255,0.6) 75%,
+    rgba(255,255,255,0.9) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
 }
 
 @keyframes dashboard-in {

@@ -24,13 +24,36 @@ export function TVDashboard() {
     };
   }, []);
 
+  const dateStr = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   // Greeting phase — cinematic entrance
   if (phase === "greeting") {
     return (
-      <div className="h-screen flex items-center justify-center bg-black">
-        <div className="animate-greeting-in text-center">
-          <div className="text-3xl font-headline font-light tracking-[0.3em] text-white/90">
-            Assalamu Alaykum, Aatir
+      <div className="h-screen flex items-center justify-center bg-black relative overflow-hidden">
+        {/* Subtle radial gradient backdrop */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,229,255,0.03)_0%,_transparent_70%)]" />
+
+        <div className="animate-greeting-in text-center relative z-10">
+          <div className="text-6xl font-headline font-bold tracking-[0.15em] greeting-shimmer leading-tight">
+            Assalamu Alaykum
+          </div>
+          <div className="greeting-subtitle text-2xl font-headline font-light tracking-[0.4em] text-white/50 mt-4">
+            Aatir
+          </div>
+
+          {/* Decorative line */}
+          <div className="flex justify-center mt-8">
+            <div className="greeting-line h-px bg-gradient-to-r from-transparent via-[#00e5ff]/40 to-transparent" />
+          </div>
+
+          {/* Date */}
+          <div className="greeting-date mt-6 text-neutral-600 text-sm font-label tracking-[0.3em] uppercase">
+            {dateStr}
           </div>
         </div>
       </div>
@@ -40,10 +63,14 @@ export function TVDashboard() {
   // Revealing phase — greeting fading out
   if (phase === "revealing" && (!data || isLoading)) {
     return (
-      <div className="h-screen flex items-center justify-center bg-black">
-        <div className="animate-greeting-out text-center">
-          <div className="text-3xl font-headline font-light tracking-[0.3em] text-white/90">
-            Assalamu Alaykum, Aatir
+      <div className="h-screen flex items-center justify-center bg-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,229,255,0.03)_0%,_transparent_70%)]" />
+        <div className="animate-greeting-out text-center relative z-10">
+          <div className="text-6xl font-headline font-bold tracking-[0.15em] text-white/90 leading-tight">
+            Assalamu Alaykum
+          </div>
+          <div className="text-2xl font-headline font-light tracking-[0.4em] text-white/50 mt-4">
+            Aatir
           </div>
         </div>
       </div>
