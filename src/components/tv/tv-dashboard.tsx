@@ -1,7 +1,6 @@
 "use client";
 
 import { useDashboard } from "@/lib/hooks/use-dashboard";
-import { TVNavBar } from "./tv-nav-bar";
 import { TVClock } from "./tv-clock";
 import { TVPrayerTracker } from "./tv-prayer-tracker";
 import { TVTaskSummary } from "./tv-task-summary";
@@ -15,7 +14,7 @@ export function TVDashboard() {
     return (
       <div className="h-screen flex flex-col items-center justify-center gap-6 bg-black">
         <div className="text-4xl font-headline font-bold tracking-tighter text-cyan-400 glow-cyan">
-          TACTICAL COMMAND
+          ARKHAM DASHBOARD
         </div>
         <div className="flex items-center gap-3 opacity-40">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
@@ -27,18 +26,12 @@ export function TVDashboard() {
     );
   }
 
-  const intentionText = data.activeSession
-    ? data.activeSession.protocolName.toUpperCase()
-    : undefined;
-
   return (
     <>
-      <TVNavBar />
-
-      <main className="min-h-screen w-full flex flex-col pt-48 pb-20 px-16">
-        {/* Centered HUD Clock & Intention */}
+      <main className="min-h-screen w-full flex flex-col pt-24 pb-20 px-16">
+        {/* Centered HUD Clock & Wisdom */}
         <section className="flex flex-col items-center justify-center mb-24">
-          <TVClock intentionText={intentionText} />
+          <TVClock />
         </section>
 
         {/* Main Content Grid (3 Columns) */}
