@@ -15,9 +15,9 @@ export function TVDashboard() {
   const [phase, setPhase] = useState<Phase>("greeting");
 
   useEffect(() => {
-    // Greeting holds for 2.5s, then reveal dashboard
-    const revealTimer = setTimeout(() => setPhase("revealing"), 2500);
-    const readyTimer = setTimeout(() => setPhase("ready"), 3500);
+    // Greeting holds for 30s, then reveal dashboard
+    const revealTimer = setTimeout(() => setPhase("revealing"), 30000);
+    const readyTimer = setTimeout(() => setPhase("ready"), 31000);
     return () => {
       clearTimeout(revealTimer);
       clearTimeout(readyTimer);
