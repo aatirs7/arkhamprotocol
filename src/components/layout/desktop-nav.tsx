@@ -9,6 +9,7 @@ import {
   ListTodo,
   FolderKanban,
   Zap,
+  StickyNote,
   Tv,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { href: "/tasks", label: "Tasks", icon: ListTodo },
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/protocols", label: "Protocols", icon: Zap },
+  { href: "/notes", label: "Notes", icon: StickyNote },
 ];
 
 export function DesktopNav() {

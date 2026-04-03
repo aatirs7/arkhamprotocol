@@ -8,6 +8,13 @@
       "when": 1775239650228,
       "tag": "0000_common_tomorrow_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775247054825,
+      "tag": "0001_exotic_madelyne_pryor",
+      "breakpoints": true
     }
   ]
 }

@@ -110,6 +110,17 @@ export const protocolSessions = pgTable("protocol_sessions", {
 });
 
 // ============================================================
+// Notes (daily thoughts)
+// ============================================================
+
+export const notes = pgTable("notes", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  date: date("date").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+// ============================================================
 // Activity Log
 // ============================================================
 

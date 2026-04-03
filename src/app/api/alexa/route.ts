@@ -4,10 +4,11 @@ import { createTask } from "@/lib/services/task-service";
 import { markPrayerComplete, getPrayerStats } from "@/lib/services/prayer-service";
 import { startSession, advanceStep, getActiveSession } from "@/lib/services/session-service";
 import { getProtocolByName } from "@/lib/services/protocol-service";
+import { addNote } from "@/lib/services/note-service";
 import { z } from "zod/v4";
 
 const alexaRequestSchema = z.object({
-  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol"]),
+  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note"]),
   payload: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -71,6 +72,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `${session.protocol.name} has been started. First step: ${session.steps[0]?.title ?? "ready"}.`,
+        });
+      }
+
+      case "add_note": {
+        const content = String(payload?.content ?? payload?.note ?? "");
+        if (!content) {
+          return NextResponse.json({
+            success: false,
+            message: "Please say what you want to note down.",
+          }, { status: 400 });
+        }
+        await addNote(content);
+        return NextResponse.json({
+          success: true,
+          message: `Got it. Note saved: "${content.slice(0, 60)}${content.length > 60 ? "..." : ""}"`,
         });
       }
 
