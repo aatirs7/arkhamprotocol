@@ -8,7 +8,7 @@ import { addNote } from "@/lib/services/note-service";
 import { z } from "zod/v4";
 
 const alexaRequestSchema = z.object({
-  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note"]),
+  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note", "open_page"]),
   payload: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -87,6 +87,30 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `Got it. Note saved: "${content.slice(0, 60)}${content.length > 60 ? "..." : ""}"`,
+        });
+      }
+
+      case "open_page": {
+        const page = String(payload?.page ?? "").toLowerCase();
+        const PAGE_MAP: Record<string, string> = {
+          tasks: "/tv/tasks",
+          projects: "/tv/projects",
+          protocols: "/tv/protocols",
+          notes: "/tv/notes",
+          home: "/tv",
+          dashboard: "/tv",
+        };
+        const url = PAGE_MAP[page];
+        if (!url) {
+          return NextResponse.json({
+            success: false,
+            message: `Unknown page "${page}". Try tasks, projects, protocols, or notes.`,
+          }, { status: 400 });
+        }
+        return NextResponse.json({
+          success: true,
+          message: `Opening ${page} page.`,
+          navigate: url,
         });
       }
 

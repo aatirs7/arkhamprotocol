@@ -68,7 +68,7 @@ export function TVClock({ data }: Props) {
       </div>
 
       {/* Daily wisdom — Quran verse or Hadith */}
-      <div className="mt-4 text-neutral-600 text-xs font-body italic tracking-wide max-w-2xl text-center leading-relaxed">
+      <div className="mt-5 text-neutral-400 text-sm font-body italic tracking-wide max-w-2xl text-center leading-relaxed">
         {wisdom}
       </div>
     </>
