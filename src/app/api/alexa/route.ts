@@ -8,7 +8,7 @@ import { addNote } from "@/lib/services/note-service";
 import { z } from "zod/v4";
 
 const alexaRequestSchema = z.object({
-  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note", "open_page"]),
+  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note", "open_page", "run_fajr_protocol"]),
   payload: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -90,6 +90,14 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      case "run_fajr_protocol": {
+        return NextResponse.json({
+          success: true,
+          message: "Starting Fajr Protocol. Bismillah.",
+          navigate: "/tv/fajr-protocol",
+        });
+      }
+
       case "open_page": {
         const page = String(payload?.page ?? "").toLowerCase();
         const PAGE_MAP: Record<string, string> = {
@@ -97,6 +105,8 @@ export async function POST(request: NextRequest) {
           projects: "/tv/projects",
           protocols: "/tv/protocols",
           notes: "/tv/notes",
+          "fajr protocol": "/tv/fajr-protocol",
+          fajr: "/tv/fajr-protocol",
           home: "/tv",
           dashboard: "/tv",
         };
