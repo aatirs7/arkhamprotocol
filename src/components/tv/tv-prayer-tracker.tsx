@@ -1,7 +1,6 @@
 "use client";
 
 import type { PrayerData } from "@/lib/types";
-import { MaterialIcon } from "./material-icon";
 
 interface Props {
   prayers: PrayerData[];
@@ -9,74 +8,91 @@ interface Props {
 
 const PRAYER_ORDER = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export function TVPrayerTracker({ prayers }: Props) {
   const sorted = PRAYER_ORDER.map(
     (name) => prayers.find((p) => p.name === name) ?? { name, completed: false }
   );
 
-  // Find the next uncompleted prayer
   const nextPrayer = sorted.find((p) => !p.completed);
-  const nextPrayerName = nextPrayer?.name?.toUpperCase() ?? "ALL COMPLETE";
+  const completedCount = sorted.filter((p) => p.completed).length;
+  const allComplete = completedCount === 5;
 
   return (
     <div className="flex flex-col thin-border-r pr-10">
-      <div className="flex items-center justify-between mb-12 opacity-40">
-        <h2 className="font-headline text-xs font-bold tracking-[0.4em] text-white uppercase">
-          PRAYER TRACKER
-        </h2>
-        <MaterialIcon name="visibility" className="text-cyan-400 text-sm" />
+      {/* Contextual lead — the system is reporting */}
+      <div className="mb-10">
+        {allComplete ? (
+          <div className="text-neutral-500 text-sm font-body tracking-wide">
+            All prayers fulfilled today.
+          </div>
+        ) : (
+          <div className="text-white/80 text-sm font-body tracking-wide">
+            Next prayer:{" "}
+            <span className="text-[#00e5ff]">
+              {capitalize(nextPrayer!.name)}
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="text-neutral-500 font-headline tracking-[0.3em] text-[10px] mb-2 uppercase opacity-60">
-          {nextPrayer ? `UPCOMING: ${nextPrayerName}` : "ALL PRAYERS COMPLETE"}
-        </div>
+      {/* Prayer list — reported, not labeled */}
+      <div className="space-y-6 flex-1">
+        {sorted.map((prayer) => {
+          const isNext = nextPrayer?.name === prayer.name;
+          const isCompleted = prayer.completed;
 
-        {/* Countdown placeholder — shows dashes until prayer time API is integrated */}
-        <div className="text-6xl font-headline font-light text-[#00e5ff] tabular-nums tracking-tight mb-12">
-          {nextPrayer ? "--:--:--" : "00:00:00"}
-        </div>
-
-        <div className="w-full space-y-8">
-          {sorted.map((prayer) => {
-            const isNext = nextPrayer?.name === prayer.name;
-            const isCompleted = prayer.completed;
-
-            return (
-              <div
-                key={prayer.name}
-                className="flex justify-between items-center text-[10px] font-label tracking-[0.2em]"
-              >
+          return (
+            <div
+              key={prayer.name}
+              className="flex items-center justify-between transition-opacity duration-500"
+            >
+              <div className="flex items-center gap-4">
+                {/* Status indicator — structural, not decorative */}
+                <div
+                  className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
+                    isCompleted
+                      ? "bg-cyan-400/30"
+                      : isNext
+                        ? "bg-[#00e5ff]"
+                        : "bg-neutral-800"
+                  }`}
+                />
                 <span
-                  className={
+                  className={`text-sm font-body tracking-wide transition-colors duration-500 ${
                     isNext
                       ? "text-[#00e5ff]"
                       : isCompleted
                         ? "text-neutral-600"
                         : "text-neutral-700"
-                  }
+                  }`}
                 >
-                  {prayer.name.toUpperCase()}
-                </span>
-                <span
-                  className={
-                    isNext
-                      ? "text-[#00e5ff]"
-                      : isCompleted
-                        ? "text-cyan-400/40"
-                        : "text-neutral-700"
-                  }
-                >
-                  {isCompleted
-                    ? "COMPLETED"
-                    : isNext
-                      ? "ACTIVE"
-                      : "--:--"}
+                  {capitalize(prayer.name)}
                 </span>
               </div>
-            );
-          })}
-        </div>
+
+              <span
+                className={`text-xs font-label tracking-wider transition-colors duration-500 ${
+                  isCompleted
+                    ? "text-neutral-700"
+                    : isNext
+                      ? "text-[#00e5ff]/60"
+                      : "text-neutral-800"
+                }`}
+              >
+                {isCompleted ? "done" : isNext ? "pending" : "—"}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Quiet count */}
+      <div className="mt-auto pt-6 text-neutral-700 text-[10px] font-label tracking-widest">
+        {completedCount}/5
       </div>
     </div>
   );

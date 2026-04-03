@@ -46,9 +46,47 @@ body {
   background: var(--color-muted);
 }
 
-/* TV Mode — Tactical Command utilities */
+/* TV Mode — JARVIS utilities */
 .glow-cyan {
-  text-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+  text-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+}
+
+/* Opening sequence */
+@keyframes greeting-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes greeting-out {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-12px); }
+}
+
+@keyframes dashboard-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-greeting-in {
+  animation: greeting-in 1.2s ease-out forwards;
+}
+
+.animate-greeting-out {
+  animation: greeting-out 0.8s ease-in forwards;
+}
+
+.animate-dashboard-in {
+  animation: dashboard-in 1.2s ease-out forwards;
+}
+
+/* Subtle clock pulse — barely perceptible */
+@keyframes clock-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.96; }
+}
+
+.clock-alive {
+  animation: clock-pulse 4s ease-in-out infinite;
 }
 
 .thin-border-r {

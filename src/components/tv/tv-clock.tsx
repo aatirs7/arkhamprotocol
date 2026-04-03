@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getDailyWisdom } from "@/lib/data/daily-wisdom";
-import { MaterialIcon } from "./material-icon";
+import { generateSystemLine } from "@/lib/data/system-awareness";
+import type { DashboardData } from "@/lib/types";
 
-export function TVClock() {
+interface Props {
+  data: DashboardData;
+}
+
+export function TVClock({ data }: Props) {
   const [time, setTime] = useState<string>("");
   const [period, setPeriod] = useState<string>("");
-  const [wisdom] = useState(() => getDailyWisdom());
+  const [dateStr, setDateStr] = useState<string>("");
 
   useEffect(() => {
     function update() {
@@ -19,33 +23,41 @@ export function TVClock() {
       const s = String(now.getSeconds()).padStart(2, "0");
       setTime(`${String(h).padStart(2, "0")}:${m}:${s}`);
       setPeriod(ampm);
+      setDateStr(
+        now.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        })
+      );
     }
     update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
   }, []);
 
+  const systemLine = generateSystemLine(data);
+
   return (
     <>
-      {/* Welcome */}
-      <div className="text-neutral-500 uppercase tracking-[0.5em] font-headline text-sm mb-4 opacity-60">
-        Welcome, Aatir
-      </div>
-
-      {/* Clock */}
-      <div className="flex items-baseline gap-4">
-        <div className="text-[12rem] font-headline font-bold tracking-tighter text-white tabular-nums glow-cyan leading-none">
+      {/* Clock — commanding, alive */}
+      <div className="flex items-baseline gap-4 clock-alive">
+        <div className="text-[11rem] font-headline font-bold tracking-tighter text-white tabular-nums glow-cyan leading-none">
           {time || "\u00A0"}
         </div>
-        <div className="text-3xl font-headline font-light text-neutral-500 tracking-wider">
+        <div className="text-2xl font-headline font-light text-neutral-600 tracking-wider">
           {period}
         </div>
       </div>
 
-      {/* Daily Wisdom */}
-      <div className="mt-8 flex items-center gap-3 text-neutral-500 uppercase tracking-[0.3em] font-headline text-[10px] opacity-70 max-w-3xl text-center leading-relaxed">
-        <MaterialIcon name="auto_stories" className="text-cyan-400/40 text-sm shrink-0" />
-        {wisdom}
+      {/* Date — quiet */}
+      <div className="mt-3 text-neutral-600 text-sm font-label tracking-[0.3em] uppercase">
+        {dateStr}
+      </div>
+
+      {/* System awareness — the system is briefing you */}
+      <div className="mt-6 text-neutral-400 text-base font-body tracking-wide max-w-2xl text-center leading-relaxed">
+        {systemLine}
       </div>
     </>
   );

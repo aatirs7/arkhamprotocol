@@ -1,84 +1,86 @@
 "use client";
 
 import type { TaskData } from "@/lib/types";
-import { MaterialIcon } from "./material-icon";
 
 interface Props {
   tasks: TaskData[];
 }
 
-const PRIORITY_LABELS: Record<string, string> = {
-  critical: "CRITICAL",
-  high: "HIGH",
-  medium: "MEDIUM",
-  low: "LOW",
-};
-
 export function TVTaskSummary({ tasks }: Props) {
-  const displayed = tasks.slice(0, 6);
+  const pending = tasks.filter((t) => t.status !== "done");
+  const displayed = pending.slice(0, 6);
+  const hasCritical = pending.some(
+    (t) => t.priority === "critical" || t.priority === "high"
+  );
+
+  // Contextual lead
+  let leadText: string;
+  if (pending.length === 0) {
+    leadText = "Nothing pending. Clear day.";
+  } else if (pending.length === 1) {
+    leadText = "1 thing needs your attention.";
+  } else if (hasCritical) {
+    leadText = `${pending.length} tasks. Some are urgent.`;
+  } else {
+    leadText = `${pending.length} things need your attention.`;
+  }
 
   return (
     <div className="flex flex-col thin-border-r pr-10">
-      <div className="flex items-center justify-between mb-12 opacity-40">
-        <h2 className="font-headline text-xs font-bold tracking-[0.4em] text-white uppercase">
-          TOP TASKS
-        </h2>
-        <MaterialIcon
-          name="format_list_bulleted"
-          className="text-cyan-400 text-sm"
-        />
+      {/* Contextual lead */}
+      <div className="mb-10">
+        <div
+          className={`text-sm font-body tracking-wide ${
+            pending.length === 0 ? "text-neutral-500" : "text-white/80"
+          }`}
+        >
+          {leadText}
+        </div>
       </div>
 
-      {displayed.length === 0 ? (
-        <div className="text-neutral-700 text-[10px] tracking-widest uppercase">
-          No tasks due today
-        </div>
-      ) : (
-        <div className="space-y-12">
-          {displayed.map((task, i) => {
-            const isCritical =
+      {/* Task list — natural names, clean */}
+      {displayed.length > 0 && (
+        <div className="space-y-6 flex-1">
+          {displayed.map((task) => {
+            const isUrgent =
               task.priority === "critical" || task.priority === "high";
-            const isDone = task.status === "done";
 
             return (
-              <div key={task.id} className="flex items-start gap-6">
+              <div
+                key={task.id}
+                className="flex items-start gap-4 transition-opacity duration-500"
+              >
+                {/* Structural indicator */}
                 <div
-                  className={`mt-1.5 w-3 h-3 border ${
-                    isDone
-                      ? "border-cyan-400/50 bg-cyan-400/30"
-                      : isCritical
-                        ? "border-cyan-400/50 bg-cyan-400/10"
-                        : "border-neutral-800"
+                  className={`mt-2 w-1.5 h-1.5 rounded-full shrink-0 ${
+                    isUrgent ? "bg-[#00e5ff]" : "bg-neutral-800"
                   }`}
                 />
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div
-                    className={`text-sm font-headline font-medium tracking-widest uppercase mb-1 ${
-                      isDone
-                        ? "text-neutral-600 line-through"
-                        : isCritical
-                          ? "text-white"
-                          : "text-neutral-400"
+                    className={`text-sm font-body tracking-wide ${
+                      isUrgent ? "text-white/90" : "text-neutral-400"
                     }`}
                   >
-                    {task.title.replace(/\s+/g, "_")}
+                    {task.title}
                   </div>
-                  <div className="text-neutral-600 text-[10px] font-label tracking-widest uppercase">
-                    {task.dueDate ?? "TODAY"} |{" "}
-                    {PRIORITY_LABELS[task.priority ?? "medium"] ?? "MEDIUM"}
-                  </div>
+                  {isUrgent && (
+                    <div className="text-[10px] text-[#00e5ff]/40 font-label tracking-wider mt-1">
+                      {task.priority}
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
+
+          {pending.length > 6 && (
+            <div className="text-neutral-700 text-[10px] font-label tracking-wider">
+              +{pending.length - 6} more
+            </div>
+          )}
         </div>
       )}
-
-      <div className="mt-auto pt-8">
-        <div className="text-[9px] text-cyan-400/20 font-headline tracking-[0.4em] uppercase">
-          SYSTEM_STATUS: SYNC_OK
-        </div>
-      </div>
     </div>
   );
 }
