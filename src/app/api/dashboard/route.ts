@@ -3,9 +3,10 @@ import { getActiveSession } from "@/lib/services/session-service";
 import { getPrayersForDate, getPrayerStats } from "@/lib/services/prayer-service";
 import { getTasksDueToday, getTasks } from "@/lib/services/task-service";
 import { getRecentActivity } from "@/lib/services/activity-service";
+import { getProjects } from "@/lib/services/project-service";
 
 export async function GET() {
-  const [activeSession, prayersToday, tasksDueToday, allTasks, recentActivity, prayerStats] =
+  const [activeSession, prayersToday, tasksDueToday, allTasks, recentActivity, prayerStats, allProjects] =
     await Promise.all([
       getActiveSession(),
       getPrayersForDate(),
@@ -13,6 +14,7 @@ export async function GET() {
       getTasks({ status: "done" }),
       getRecentActivity(10),
       getPrayerStats(),
+      getProjects(),
     ]);
 
   const data = {
@@ -34,6 +36,9 @@ export async function GET() {
     prayersToday,
     tasksDueToday,
     recentActivity,
+    projects: allProjects
+      .filter((p) => p.status === "active")
+      .slice(0, 5),
     stats: {
       tasksCompleted: allTasks.length,
       prayersCompleted: prayerStats.completed,

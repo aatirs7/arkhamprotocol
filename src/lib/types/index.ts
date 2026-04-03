@@ -5,11 +5,20 @@ export type SessionStatus = "active" | "completed" | "abandoned";
 export type PrayerName = "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
 export type DisplayMode = "tv" | "desktop";
 
+export interface ProjectData {
+  id: number;
+  name: string;
+  description: string | null;
+  status: string | null;
+  progress: number | null;
+}
+
 export interface DashboardData {
   activeSession: ActiveSessionData | null;
   prayersToday: PrayerData[];
   tasksDueToday: TaskData[];
   recentActivity: ActivityData[];
+  projects: ProjectData[];
   stats: {
     tasksCompleted: number;
     prayersCompleted: number;

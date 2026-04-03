@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 
 @theme inline {
@@ -41,4 +44,30 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted);
+}
+
+/* TV Mode — Tactical Command utilities */
+.glow-cyan {
+  text-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+}
+
+.thin-border-r {
+  border-right: 1px solid rgba(0, 229, 255, 0.1);
+}
+
+.font-headline {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.font-body {
+  font-family: "Inter", sans-serif;
+}
+
+.font-label {
+  font-family: "Inter", sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
 }

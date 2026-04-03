@@ -1,8 +1,7 @@
 "use client";
 
 import type { PrayerData } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
+import { MaterialIcon } from "./material-icon";
 
 interface Props {
   prayers: PrayerData[];
@@ -15,50 +14,69 @@ export function TVPrayerTracker({ prayers }: Props) {
     (name) => prayers.find((p) => p.name === name) ?? { name, completed: false }
   );
 
-  const completed = sorted.filter((p) => p.completed).length;
+  // Find the next uncompleted prayer
+  const nextPrayer = sorted.find((p) => !p.completed);
+  const nextPrayerName = nextPrayer?.name?.toUpperCase() ?? "ALL COMPLETE";
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-text-secondary uppercase tracking-wider">
-          Salah
+    <div className="flex flex-col thin-border-r pr-10">
+      <div className="flex items-center justify-between mb-12 opacity-40">
+        <h2 className="font-headline text-xs font-bold tracking-[0.4em] text-white uppercase">
+          PRAYER TRACKER
         </h2>
-        <span className="text-lg text-text-secondary">
-          <span className="text-text-primary font-bold">{completed}</span> / 5
-        </span>
+        <MaterialIcon name="visibility" className="text-cyan-400 text-sm" />
       </div>
 
-      <div className="flex-1 flex flex-col justify-center gap-4">
-        {sorted.map((prayer) => (
-          <div
-            key={prayer.name}
-            className={cn(
-              "flex items-center gap-4 px-4 py-3 rounded-xl transition-colors duration-300",
-              prayer.completed
-                ? "bg-success/10 border border-success/20"
-                : "bg-surface border border-border"
-            )}
-          >
-            <div
-              className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-                prayer.completed
-                  ? "bg-success text-background"
-                  : "bg-border text-muted"
-              )}
-            >
-              {prayer.completed && <Check className="w-5 h-5" />}
-            </div>
-            <span
-              className={cn(
-                "text-2xl font-medium capitalize",
-                prayer.completed ? "text-success" : "text-text-primary"
-              )}
-            >
-              {prayer.name}
-            </span>
-          </div>
-        ))}
+      <div className="flex-1 flex flex-col">
+        <div className="text-neutral-500 font-headline tracking-[0.3em] text-[10px] mb-2 uppercase opacity-60">
+          {nextPrayer ? `UPCOMING: ${nextPrayerName}` : "ALL PRAYERS COMPLETE"}
+        </div>
+
+        {/* Countdown placeholder — shows dashes until prayer time API is integrated */}
+        <div className="text-6xl font-headline font-light text-[#00e5ff] tabular-nums tracking-tight mb-12">
+          {nextPrayer ? "--:--:--" : "00:00:00"}
+        </div>
+
+        <div className="w-full space-y-8">
+          {sorted.map((prayer) => {
+            const isNext = nextPrayer?.name === prayer.name;
+            const isCompleted = prayer.completed;
+
+            return (
+              <div
+                key={prayer.name}
+                className="flex justify-between items-center text-[10px] font-label tracking-[0.2em]"
+              >
+                <span
+                  className={
+                    isNext
+                      ? "text-[#00e5ff]"
+                      : isCompleted
+                        ? "text-neutral-600"
+                        : "text-neutral-700"
+                  }
+                >
+                  {prayer.name.toUpperCase()}
+                </span>
+                <span
+                  className={
+                    isNext
+                      ? "text-[#00e5ff]"
+                      : isCompleted
+                        ? "text-cyan-400/40"
+                        : "text-neutral-700"
+                  }
+                >
+                  {isCompleted
+                    ? "COMPLETED"
+                    : isNext
+                      ? "ACTIVE"
+                      : "--:--"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

@@ -1,71 +1,55 @@
 "use client";
 
 import { useDashboard } from "@/lib/hooks/use-dashboard";
+import { TVNavBar } from "./tv-nav-bar";
 import { TVClock } from "./tv-clock";
-import { TVProtocolCard } from "./tv-protocol-card";
 import { TVPrayerTracker } from "./tv-prayer-tracker";
 import { TVTaskSummary } from "./tv-task-summary";
-import { TVMissionBanner } from "./tv-mission-banner";
-import { TVActivityFeed } from "./tv-activity-feed";
-import { Shield } from "lucide-react";
+import { TVProjectTracker } from "./tv-project-tracker";
+import { TVFooter } from "./tv-footer";
 
 export function TVDashboard() {
   const { data, isLoading } = useDashboard();
 
   if (isLoading || !data) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center gap-6">
-        <Shield className="w-20 h-20 text-accent animate-pulse" />
-        <h1 className="text-4xl font-bold text-text-primary tracking-widest uppercase">
-          Arkham
-        </h1>
-        <p className="text-xl text-text-secondary">Initializing...</p>
+      <div className="h-screen flex flex-col items-center justify-center gap-6 bg-black">
+        <div className="text-4xl font-headline font-bold tracking-tighter text-cyan-400 glow-cyan">
+          TACTICAL COMMAND
+        </div>
+        <div className="flex items-center gap-3 opacity-40">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-[10px] font-label text-neutral-500 tracking-[0.4em] uppercase">
+            Initializing Systems
+          </span>
+        </div>
       </div>
     );
   }
 
+  const intentionText = data.activeSession
+    ? data.activeSession.protocolName.toUpperCase()
+    : undefined;
+
   return (
-    <div className="h-screen flex flex-col p-6 gap-4">
-      {/* Top bar */}
-      <header className="flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-4">
-          <Shield className="w-8 h-8 text-accent" />
-          <h1 className="text-2xl font-bold tracking-widest uppercase text-text-primary">
-            Arkham
-          </h1>
-        </div>
-        <TVMissionBanner stats={data.stats} />
-        <TVClock />
-      </header>
+    <>
+      <TVNavBar />
 
-      {/* Divider */}
-      <div className="h-px bg-border shrink-0" />
+      <main className="min-h-screen w-full flex flex-col pt-48 pb-20 px-16">
+        {/* Centered HUD Clock & Intention */}
+        <section className="flex flex-col items-center justify-center mb-24">
+          <TVClock intentionText={intentionText} />
+        </section>
 
-      {/* Main grid */}
-      <div className="flex-1 grid grid-cols-2 gap-6 min-h-0">
-        {/* Top left: Protocol */}
-        <div className="bg-surface rounded-2xl border border-border p-6 overflow-hidden">
-          <TVProtocolCard session={data.activeSession} />
-        </div>
-
-        {/* Top right: Prayers */}
-        <div className="bg-surface rounded-2xl border border-border p-6 overflow-hidden">
+        {/* Main Content Grid (3 Columns) */}
+        <div className="grid grid-cols-3 gap-20 flex-1">
           <TVPrayerTracker prayers={data.prayersToday} />
-        </div>
-      </div>
-
-      {/* Bottom row */}
-      <div className="grid grid-cols-2 gap-6 h-[35%] shrink-0">
-        {/* Bottom left: Tasks */}
-        <div className="bg-surface rounded-2xl border border-border p-6 overflow-hidden">
           <TVTaskSummary tasks={data.tasksDueToday} />
+          <TVProjectTracker projects={data.projects} />
         </div>
+      </main>
 
-        {/* Bottom right: Activity */}
-        <div className="bg-surface rounded-2xl border border-border p-6 overflow-hidden">
-          <TVActivityFeed activities={data.recentActivity} />
-        </div>
-      </div>
-    </div>
+      <TVFooter />
+    </>
   );
 }

@@ -1,79 +1,83 @@
 "use client";
 
 import type { TaskData } from "@/lib/types";
-import { cn } from "@/lib/utils";
-import { Circle, CheckCircle2, ListTodo } from "lucide-react";
+import { MaterialIcon } from "./material-icon";
 
 interface Props {
   tasks: TaskData[];
 }
 
-const PRIORITY_COLORS: Record<string, string> = {
-  critical: "text-danger",
-  high: "text-warning",
-  medium: "text-accent",
-  low: "text-muted",
+const PRIORITY_LABELS: Record<string, string> = {
+  critical: "CRITICAL",
+  high: "HIGH",
+  medium: "MEDIUM",
+  low: "LOW",
 };
 
 export function TVTaskSummary({ tasks }: Props) {
   const displayed = tasks.slice(0, 6);
 
-  if (displayed.length === 0) {
-    return (
-      <div className="flex flex-col h-full">
-        <h2 className="text-xl font-semibold text-text-secondary uppercase tracking-wider mb-6">
-          Tasks
-        </h2>
-        <div className="flex-1 flex flex-col items-center justify-center text-muted">
-          <ListTodo className="w-12 h-12 mb-3 opacity-30" />
-          <p className="text-xl">No tasks due today</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-text-secondary uppercase tracking-wider">
-          Tasks
+    <div className="flex flex-col thin-border-r pr-10">
+      <div className="flex items-center justify-between mb-12 opacity-40">
+        <h2 className="font-headline text-xs font-bold tracking-[0.4em] text-white uppercase">
+          TOP TASKS
         </h2>
-        <span className="text-lg text-text-secondary">{tasks.length} due</span>
+        <MaterialIcon
+          name="format_list_bulleted"
+          className="text-cyan-400 text-sm"
+        />
       </div>
 
-      <div className="flex-1 flex flex-col gap-3">
-        {displayed.map((task) => (
-          <div
-            key={task.id}
-            className="flex items-center gap-4 px-4 py-3 bg-surface rounded-xl border border-border"
-          >
-            {task.status === "done" ? (
-              <CheckCircle2 className="w-6 h-6 text-success shrink-0" />
-            ) : (
-              <Circle
-                className={cn(
-                  "w-6 h-6 shrink-0",
-                  PRIORITY_COLORS[task.priority ?? "medium"]
-                )}
-              />
-            )}
-            <span
-              className={cn(
-                "text-xl truncate",
-                task.status === "done"
-                  ? "text-muted line-through"
-                  : "text-text-primary"
-              )}
-            >
-              {task.title}
-            </span>
-          </div>
-        ))}
-        {tasks.length > 6 && (
-          <p className="text-sm text-muted text-center mt-2">
-            +{tasks.length - 6} more
-          </p>
-        )}
+      {displayed.length === 0 ? (
+        <div className="text-neutral-700 text-[10px] tracking-widest uppercase">
+          No tasks due today
+        </div>
+      ) : (
+        <div className="space-y-12">
+          {displayed.map((task, i) => {
+            const isCritical =
+              task.priority === "critical" || task.priority === "high";
+            const isDone = task.status === "done";
+
+            return (
+              <div key={task.id} className="flex items-start gap-6">
+                <div
+                  className={`mt-1.5 w-3 h-3 border ${
+                    isDone
+                      ? "border-cyan-400/50 bg-cyan-400/30"
+                      : isCritical
+                        ? "border-cyan-400/50 bg-cyan-400/10"
+                        : "border-neutral-800"
+                  }`}
+                />
+                <div className="flex-1">
+                  <div
+                    className={`text-sm font-headline font-medium tracking-widest uppercase mb-1 ${
+                      isDone
+                        ? "text-neutral-600 line-through"
+                        : isCritical
+                          ? "text-white"
+                          : "text-neutral-400"
+                    }`}
+                  >
+                    {task.title.replace(/\s+/g, "_")}
+                  </div>
+                  <div className="text-neutral-600 text-[10px] font-label tracking-widest uppercase">
+                    {task.dueDate ?? "TODAY"} |{" "}
+                    {PRIORITY_LABELS[task.priority ?? "medium"] ?? "MEDIUM"}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="mt-auto pt-8">
+        <div className="text-[9px] text-cyan-400/20 font-headline tracking-[0.4em] uppercase">
+          SYSTEM_STATUS: SYNC_OK
+        </div>
       </div>
     </div>
   );
