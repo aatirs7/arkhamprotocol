@@ -5,10 +5,11 @@ import { markPrayerComplete, getPrayerStats } from "@/lib/services/prayer-servic
 import { startSession, advanceStep, getActiveSession } from "@/lib/services/session-service";
 import { getProtocolByName } from "@/lib/services/protocol-service";
 import { addNote } from "@/lib/services/note-service";
+import { getPrayerTime, getAllPrayerTimesFormatted, getNextPrayer } from "@/lib/services/aladhan-service";
 import { z } from "zod/v4";
 
 const alexaRequestSchema = z.object({
-  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note", "open_page", "run_fajr_protocol"]),
+  action: z.enum(["add_task", "complete_prayer", "start_protocol", "advance_protocol", "add_note", "open_page", "run_fajr_protocol", "get_prayer_time", "get_all_prayer_times", "get_next_prayer", "play_adhan"]),
   payload: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -143,6 +144,57 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `Moving to step ${(updated.currentStepIndex ?? 0) + 1}: ${nextStep?.title ?? "next"}.`,
+        });
+      }
+
+      case "get_prayer_time": {
+        const prayer = String(payload?.prayer ?? "").toLowerCase();
+        if (!prayer) {
+          return NextResponse.json({
+            success: false,
+            message: "Please specify which prayer. For example, Fajr or Maghrib.",
+          }, { status: 400 });
+        }
+        const time = await getPrayerTime(prayer);
+        const prayerName = prayer.charAt(0).toUpperCase() + prayer.slice(1);
+        const speech = `${prayerName} is at ${time} today.`;
+        return NextResponse.json({ success: true, message: speech, speech });
+      }
+
+      case "get_all_prayer_times": {
+        const speech = await getAllPrayerTimesFormatted();
+        return NextResponse.json({ success: true, message: speech, speech });
+      }
+
+      case "get_next_prayer": {
+        const next = await getNextPrayer();
+        const hours = Math.floor(next.minutesUntil / 60);
+        const mins = next.minutesUntil % 60;
+        let timeUntil: string;
+        if (hours > 0 && mins > 0) {
+          timeUntil = `about ${hours} hour${hours > 1 ? "s" : ""} and ${mins} minute${mins !== 1 ? "s" : ""}`;
+        } else if (hours > 0) {
+          timeUntil = `about ${hours} hour${hours > 1 ? "s" : ""}`;
+        } else {
+          timeUntil = `about ${mins} minute${mins !== 1 ? "s" : ""}`;
+        }
+        const speech = `The next prayer is ${next.name} at ${next.time}, in ${timeUntil}.`;
+        return NextResponse.json({ success: true, message: speech, speech });
+      }
+
+      case "play_adhan": {
+        const variant = String(payload?.prayer ?? "regular").toLowerCase();
+        const ADHAN_MAP: Record<string, string> = {
+          fajr: "fajr-adhan.mp3",
+          tahajjud: "tahajjud-adhan.mp3",
+        };
+        const filename = ADHAN_MAP[variant] ?? "regular-adhan.mp3";
+        const audioUrl = `https://arkhamprotocol.vercel.app/audio/${filename}`;
+        return NextResponse.json({
+          success: true,
+          message: "Playing adhan.",
+          speech: "",
+          audioUrl,
         });
       }
 
