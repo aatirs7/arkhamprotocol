@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep:*)",
+      "Bash(npx tsc:*)",
+      "Bash(ask:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir -p \"/c/Users/aatir/Documents/Elysium Ventures LLC/my-prayers-skill\")",
+      "Read(//c/Users/aatir/Documents/Elysium Ventures LLC/**)",
+      "Bash(mkdir -p \"/c/Users/aatir/Documents/Elysium Ventures LLC/my-prayers-skill/skill-package/interactionModels/custom\")",
+      "Bash(mkdir -p \"/c/Users/aatir/Documents/Elysium Ventures LLC/my-prayers-skill/lambda\")",
+      "Bash(aws sts:*)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); r=d.get\\('result',{}\\).get\\('alexaExecutionInfo',{}\\).get\\('alexaResponses',[]\\); print\\(json.dumps\\(r, indent=2\\)\\) if r else print\\(json.dumps\\(d, indent=2\\)\\)\")"
+    ]
+  }
+}
